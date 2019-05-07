@@ -1,0 +1,24 @@
+counter status_200
+counter status_302
+counter status_404
+counter status_500
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*200 OK.*/ {
+    strptime($date, "Jan _2 15:04:05")
+   status_200++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*302 Found.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    status_302++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*404 Not Found.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    status_404++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*500 Internal Server Error.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    status_500++
+}

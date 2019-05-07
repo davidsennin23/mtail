@@ -1,0 +1,48 @@
+counter emails_read
+counter emails_deleted
+counter emails_sent
+counter emails_forwarded
+counter attachments_downloaded
+counter attachments_uploaded
+counter x_uol_move_errors
+counter uid_move_errors
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Completed in.*200 OK.+(\/main\/message\?uid=|mail\/message).*/ {
+    strptime($date, "Jan _2 15:04:05")
+    emails_read++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Completed in.*200 OK.*(\/main\/trash_message|mail\/delete|fast-mail-move-op-trash\=).*/ {
+    strptime($date, "Jan _2 15:04:05")
+    emails_deleted++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Completed in.*200 OK.*compose\/send_email.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    emails_sent++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Parameters.*\"method\"\=>\"FORWARD\".*/ {
+    strptime($date, "Jan _2 15:04:05")
+    emails_forwarded++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Attachment.*is being downloaded.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    attachments_downloaded++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Completed in.*200 OK.*compose\/attachment.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    attachments_uploaded++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Failed using X-UOL-MOVE.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    x_uol_move_errors++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Failed on uid_move.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    uid_move_errors++
+}
