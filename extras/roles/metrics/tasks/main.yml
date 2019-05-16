@@ -1,0 +1,58 @@
+- name: Create mtail scripts directory
+  file:
+    path: "/opt/mtail/{{ item }}"
+    owner: root
+    group: root
+    state: directory
+  with_items:
+    - scripts
+
+- name: Create node exporter directory
+  file:
+    path: /opt/node_exporter
+    owner: root
+    group: root
+    state: directory
+
+- name: Copy mtail scripts
+  copy:
+    src: "mtail-scripts/{{ item }}"
+    dest: /opt/mtail/scripts
+  with_items:
+    - afiliados.mtail
+    - linguem.mtail
+    - memcache.mtail
+    - nginx.mtail
+    - status_code.mtail
+    - webmail.mtail
+
+- name: Copy builded mtail
+  copy:
+    src: "builded-files/mtail"
+    dest: /opt/mtail
+
+- name: Copy builded node exporter
+  copy:
+    src: "builded-files/node_exporter"
+    dest: /opt/node_exporter
+
+- name: Copy service files
+  copy:
+    src: "services/{{ item }}"
+    dest: /etc/systemd/system/
+  with_items:
+    - mtail.service
+    - node_exporter.service
+  notify: reload daemons
+
+- name: Enable mtail
+  systemd:
+    name: mtail
+    enabled: yes
+    state: restarted
+
+- name: Restart node exporter
+  systemd:
+    name: node_exporter
+    enabled: yes
+    state: restarted

@@ -1,0 +1,12 @@
+counter server_unavailable_errors
+counter invalid_session_errors
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*memcached session error.*No servers available sid\:.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    server_unavailable_errors++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*session was invalid on DalliStore.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    invalid_session_errors++
+}

@@ -1,0 +1,50 @@
+
+---
+  - name: Searching exiting AMI
+    ec2_ami_facts:
+      region: "{{ region }}"
+      owner: self
+      filters:
+        "tag:Name": "Webmail metrics"
+        "tag:Brand": "afiliados"
+    register: ami_find
+    ignore_errors: yes
+
+  - name: Deleting old AMI
+    ec2_ami:
+      region: "{{ region }}"
+      image_id: "{{ ami_find.images[0].image_id }}"
+      delete_snapshot: true
+      state: absent
+    when: ami_find.images | length > 0
+
+  - name: Generate AMI
+    ec2_ami:
+      region: "{{ region }}"
+      instance_id: "{{ ec2_instance_id }}"
+      wait: yes
+      name: "Webmail - afiliados metrics"
+      delete_snapshot: yes
+      tags:
+        Name: "Webmail metrics"
+        Service: "Webmail"
+        Brand: "afiliados"
+    register: imageid
+
+  - name: Image Details
+    debug:
+      var: imageid
+
+  - name: Destroy sandbox instance
+    ec2:
+      region: "{{ region }}"
+      state: absent
+      instance_ids:
+        - "{{ ec2_instance_id }}"
+      wait: true
+
+  - name: Delete security group
+    ec2_group:
+      name: SG Jenkins Sandbox
+      region: "{{ region }}"
+      state: absent

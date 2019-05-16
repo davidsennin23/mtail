@@ -1,0 +1,37 @@
+counter status_200
+counter status_302
+counter status_404
+counter status_500
+
+gauge average_500
+hidden gauge last_time
+hidden gauge time_start
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*200 OK.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    status_200++
+    (time_start == 0) {
+        time_start = timestamp()
+    } otherwise {
+        # Um teste pra atualização do average com mais frequencia
+        last_time = timestamp()
+        average_500 = float(status_500)/(last_time - time_start)
+    }
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*302 Found.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    status_302++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*404 Not Found.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    status_404++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*500 Internal Server Error.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    status_500++
+    last_time = timestamp()
+    average_500 = float(status_500)/(last_time - time_start)
+}

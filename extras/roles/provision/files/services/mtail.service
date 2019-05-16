@@ -1,0 +1,20 @@
+[Unit]
+Description=Mtail
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+ExecStart=/usr/bin/sudo /opt/mtail/mtail --progs /opt/mtail/scripts --logs /var/log/wor/wor.log --logs /var/log/nginx/access.log --logs /var/log/nginx/error.log -log_dir /home/ec2-user/mtail-scripts
+ExecStop=/usr/bin/sudo pkill -f mtail
+
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+
+TimeoutStartSec=0
+TimeoutStopSec=0
+
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

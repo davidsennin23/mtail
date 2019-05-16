@@ -1,0 +1,11 @@
+global:
+
+route:
+  group_by: ['brand', severity]
+  receiver: slack
+
+receivers:
+  - name: slack
+    slack_configs:
+      - api_url: https://hooks.slack.com/services/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
+        channel: '#alertswebmailaws'

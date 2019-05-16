@@ -1,0 +1,20 @@
+[Unit]
+Description=Node_exporter
+
+[Service]
+Type=notify
+RemainAfterExit=yes
+ExecStart=/home/ec2-user/go/src/github.com/prometheus/node_exporter/node_exporter
+ExecStop=/usr/bin/sudo pkill -f node_exporter
+
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+
+TimeoutStartSec=0
+TimeoutStopSec=0
+
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

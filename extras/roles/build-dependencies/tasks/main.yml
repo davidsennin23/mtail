@@ -1,0 +1,11 @@
+- name: Download mtail project
+  command: "chdir={{ ansible_env.GOPATH }}/src/github.com/google /usr/bin/git clone https://github.com/google/mtail.git"
+
+- name: Build mtail
+  command: "chdir={{ ansible_env.GOPATH }}/src/github.com/google/mtail make"
+
+- name: Download node exporter project
+  command: "{{ ansible_env.GOROOT }}/bin/go get -u github.com/prometheus/node_exporter"
+
+- name: Build node exporter
+  command: "chdir={{ ansible_env.GOPATH }}/src/github.com/prometheus/node_exporter make"

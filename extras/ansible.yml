@@ -1,0 +1,20 @@
+- name: Create instance to provision
+  hosts: localhost
+  become: yes
+  gather_facts: false
+  roles:
+    - create-ec2
+
+- name: Provision instance with metrics services
+  hosts: launched
+  become: true
+  gather_facts: true
+  roles:
+    - provision
+
+- name: Create ami
+  hosts: localhost
+  become: true
+  gather_facts: true
+  roles:
+    - create-ami

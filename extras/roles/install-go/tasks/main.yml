@@ -1,0 +1,13 @@
+- name: Check go installed
+  stat:
+    path: /usr/local/go/bin/go
+  register: stat_go
+
+- name: Install go if not exists
+  include: install-go.yml
+  when: stat_go.stat.exists == False
+
+# - name: Set environment
+#   environment:
+#     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/go/bin"
+#     GOPATH: "{{ playbook_dir }}/go"

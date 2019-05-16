@@ -1,0 +1,69 @@
+counter authentications
+counter requests
+counter redirects
+gauge requests_per_second
+
+counter logged
+counter total_time_logged
+counter average_time_logged
+
+counter no_session_errors
+counter routing_errors
+counter mysql_errors
+counter smtp_timeout_errors
+counter suzano_max_requests_errors
+
+hidden gauge be_happy
+hidden gauge last_time
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Completed in.*login\/doorway.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    authentications++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Redirected to http.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    redirects++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Completed in (?P<time>[0-9.]+)ms.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    be_happy = $time
+    ((be_happy - last_time) < $time) {
+        requests_per_second = 1/(be_happy - last_time)
+    }
+    last_time = $time
+    requests++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Logged in as.*in (?P<time>[0-9.]+).*/ {
+    strptime($date, "Jan _2 15:04:05")
+    total_time_logged += $time
+    logged++
+    average_time_logged = total_time_logged/logged
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Authentication failure\: no user associated with this session.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    no_session_errors++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*ActionController\:\:RoutingError.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    routing_errors++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Using.+MySQL.+Adapter.+connection.+failover.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    mysql_errors++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Timed out after.*trying to send message to SMTP server.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    smtp_timeout_errors++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*max suzano requests reached.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    suzano_max_requests_errors++
+}

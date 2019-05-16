@@ -2,20 +2,21 @@ counter resource_unavailable_errors
 counter requests
 counter time_total_requests
 counter average_time_requests
+counter requests_total
 
 /^(?P<date>\d+\/\d+\/\d+ \d+:\d+:\d+).*Resource temporarily unavailable.*/ {
     strptime($date, "2006/01/02 15:04:05")
     resource_unavailable_errors++
 }
 
-/.*\[(?P<date>\d+\/\w+\/\d+\:\d+\:\d+\:\d+\s-\d+)\].*\"(?P<time>[0-9.]+)\".*/ {
-    strptime($date, "07/May/2019:15:03:52")
+/.*\[(?P<date>\d{2}\/\w{3}\/\d{4}:\d{2}:\d{2}:\d{2} (\+|-)\d{4})\].*\"(?P<time>[0-9.]+)\".*/ {
+    strptime($date, "02/Jan/2006:15:04:05 -0700")
     requests++
     time_total_requests += $time
     average_time_requests = time_total_requests/requests
 }
 
-/.*\[(?P<date>\d+\/\w+\/\d+\:\d+\:\d+\:\d+\s-\d+)\]\s+\"\w+\s+.*/ {
-    strptime($date, "07/May/2019:15:03:52")
+/.*\[(?P<date>\d{2}\/\w{3}\/\d{4}:\d{2}:\d{2}:\d{2} (\+|-)\d{4})\]\s+\"\w+\s+.*/ {
+    strptime($date, "02/Jan/2006:15:04:05 -0700")
     requests_total++
 }

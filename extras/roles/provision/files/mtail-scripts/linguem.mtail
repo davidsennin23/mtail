@@ -1,0 +1,35 @@
+counter imap_authentication_errors
+counter imap_timeouts
+counter getting_available_hs_errors
+counter user_disabled_errors
+counter imap_logins
+counter total_time_imap_logins
+counter average_time_imap_logins
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*ImapInitializationError: Falha ao autenticar.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    imap_authentication_errors++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Timed out after trying.*to connect to IMAP server.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    imap_timeouts++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Error getting available HS for user.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    getting_available_hs_errors++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Failed logging as.+user disabled.*/ {
+    strptime($date, "Jan _2 15:04:05")
+    user_disabled_errors++
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+).*Logged in as.*in (?P<time>[0-9.]+).*/ {
+    strptime($date, "Jan _2 15:04:05")
+    imap_logins++
+    total_time_imap_logins += $time
+    average_time_imap_logins = total_time_imap_logins/imap_logins
+}
+

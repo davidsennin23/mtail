@@ -1,0 +1,99 @@
+counter fiding_cache
+counter fiding_cache_total as "total-fidding-cache"
+counter average_finding_cache as "average-fidding-cache"
+
+counter setting_cache
+counter setting_cache_total as "total-setting-cache"
+counter average_setting_cache as "average-setting-cache"
+
+counter creating_config_default
+counter creating_config_default_total as "total-creating-config-default"
+counter average_creating_config_default as "average-creating-config-default"
+
+counter creating_config_setting
+counter creating_config_setting_total as "total-creating-config-setting"
+counter average_creating_config_setting as "average-creating-config-setting"
+
+counter saving_config
+counter saving_config_total as "total-saving-config"
+counter average_saving_config as "average-fsaving-config"
+
+counter benchmark_error
+counter benchmark_error_total as "total-benchmark-error"
+counter average_benchmark_error as "average-benchmark-error"
+
+counter session_created
+counter session_created_total as "total-session-created"
+counter average_session_created as "average-session-created"
+
+counter line_count as "total-read-lines"
+counter higher_than_five as "total-requests-exceeded-five-seconds"
+
+hidden counter seconds_counter
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+)\s.*benchmark Configuration finding cache by idt_person -*.*- (?P<time>[0-9.]+).*$/ {
+    strptime($date, "Jan _2 15:04:05")
+    fiding_cache++
+    fiding_cache_total += $time
+    seconds_counter += $time
+    average_finding_cache = fiding_cache_total/fiding_cache
+}
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+)\s.*benchmark Configuration setting cache by idt_person -*.*- (?P<time>[0-9.]+).*$/ {
+    strptime($date, "Jan _2 15:04:05")
+    setting_cache++
+    setting_cache_total += $time
+    seconds_counter += $time
+    average_setting_cache = setting_cache_total/setting_cache
+}
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+)\s.*benchmark creating Configuration default-*.*- (?P<time>[0-9.]+).*$/ {
+    strptime($date, "Jan _2 15:04:05")
+    creating_config_default++
+    creating_config_default_total += $time
+    seconds_counter += $time
+    average_creating_config_default = creating_config_default_total/creating_config_default
+}
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+)\s.*benchmark creating Setting Configuration -*.*- (?P<time>[0-9.]+).*$/ {
+    strptime($date, "Jan _2 15:04:05")
+    creating_config_setting++
+    creating_config_setting_total += $time
+    seconds_counter += $time
+    average_creating_config_setting = creating_config_setting_total/creating_config_setting
+}
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+)\s.*benchmark save Setting Configuration and Configuration -*.*- (?P<time>[0-9.]+).*$/ {
+    strptime($date, "Jan _2 15:04:05")
+    saving_config++
+    saving_config_total += $time
+    seconds_counter += $time
+    average_saving_config = saving_config_total/saving_config
+    (seconds_counter >= 5) {
+        higher_than_five++
+    }
+    seconds_counter = 0
+}
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+)\s.*benchmark Configuration error -*.*- (?P<time>[0-9.]+).*$/ {
+    strptime($date, "Jan _2 15:04:05")
+    benchmark_error++
+    benchmark_error_total += $time
+    seconds_counter += $time
+    average_benchmark_error = benchmark_error_total/benchmark_error
+    (seconds_counter >= 5) {
+        higher_than_five++
+    }
+    seconds_counter = 0
+}
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+)\s.*benchmark Session created -*.*- (?P<time>[0-9.]+).*$/ {
+    strptime($date, "Jan _2 15:04:05")
+    session_created++
+    session_created_total += $time
+    seconds_counter += $time
+    average_session_created = session_created_total/session_created
+    (seconds_counter >= 5) {
+        higher_than_five++
+    }
+    seconds_counter = 0
+}
+
+/^(?P<date>\w+\s+\d+\s+\d+:\d+:\d+)\s.*$/ {
+    strptime($date, "Jan _2 15:04:05")
+    line_count++
+}

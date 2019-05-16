@@ -1,0 +1,8 @@
+version: 1.12.5
+vpc_id: vpc-fa38f580
+region: us-east-1
+ops_vpc_cidr: 10.0.0.0/8
+ami: ami-035be7bafff33b6b6
+subnet_id: subnet-001dcf1748955634a
+keypair_name: webmail-qa
+instance_type: t2.small
